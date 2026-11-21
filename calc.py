@@ -2,8 +2,9 @@ import tkinter as tk
 window = tk.Tk()
 window.title('Калькулятор бета')
 window.geometry ('300x400')
-display = tk.Entry(window, font=('Arial', 20),  justify='right')
+display = tk.Entry(window, font=('Arial', 20),  justify='right', takefocus= 0)
 display.pack(fill='x', padx=10, pady=10) 
+display.bind('<Button-1>', lambda e: 'break')
 Frame = tk.Frame(window)
 Frame.pack()
 btn_7= tk.Button(Frame, text='7',bg='white', fg='black', command=lambda:display.insert(tk.END, '7'), width=5, height=2, font=('Arial', 14))
@@ -49,5 +50,23 @@ def clear_display():
     display.delete(0, tk.END)
 btn_clear = tk.Button(Frame,text= 'C',bg='white', fg='black', command=clear_display, width=5, height=2, font=('Arial', 14))
 btn_clear.grid(row=3, column=0, padx=5, pady=5)
+def key_press(event):
+    allowed_chars = '0123456789+-*/.'
+
+    if event.keysym == 'BackSpace':
+        current_text = display.get()
+        if len(current_text) > 0:
+            display.delete(len(current_text) - 1, tk.END)
+
+    elif event.keysym in ('Return', 'KP_Enter'):
+        calculate()
+
+    elif event.keysym == 'Escape':
+        clear_display()
+
+    elif event.char in allowed_chars and event.char != '':
+        display.insert(tk.END, event.char)
+
+window.bind('<Key>', key_press)
 window.mainloop()
 
